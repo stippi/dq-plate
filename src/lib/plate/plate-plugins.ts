@@ -2,18 +2,12 @@ import { createAlignPlugin } from '@udecode/plate-alignment';
 import { createAutoformatPlugin } from '@udecode/plate-autoformat';
 import {
   createBoldPlugin,
-  createCodePlugin,
   createItalicPlugin,
   createStrikethroughPlugin,
-  createSubscriptPlugin,
-  createSuperscriptPlugin,
   createUnderlinePlugin,
   MARK_BOLD,
-  MARK_CODE,
   MARK_ITALIC,
   MARK_STRIKETHROUGH,
-  MARK_SUBSCRIPT,
-  MARK_SUPERSCRIPT,
   MARK_UNDERLINE,
 } from '@udecode/plate-basic-marks';
 import {
@@ -25,15 +19,6 @@ import {
   createSoftBreakPlugin,
 } from '@udecode/plate-break';
 import { createCaptionPlugin } from '@udecode/plate-caption';
-import {
-  createCodeBlockPlugin,
-  ELEMENT_CODE_BLOCK,
-  ELEMENT_CODE_LINE,
-  ELEMENT_CODE_SYNTAX,
-  isCodeBlockEmpty,
-  isSelectionAtCodeBlockStart,
-  unwrapCodeBlock,
-} from '@udecode/plate-code-block';
 import { createComboboxPlugin } from '@udecode/plate-combobox';
 import { createCommentsPlugin, MARK_COMMENT } from '@udecode/plate-comments';
 import {
@@ -125,10 +110,6 @@ import { createTrailingBlockPlugin } from '@udecode/plate-trailing-block';
 import { autoformatPlugin } from '@/lib/plate/autoformatPlugin';
 import { dragOverCursorPlugin } from '@/lib/plate/dragOverCursorPlugin';
 import { BlockquoteElement } from '@/components/plate-ui/blockquote-element';
-import { CodeBlockElement } from '@/components/plate-ui/code-block-element';
-import { CodeLeaf } from '@/components/plate-ui/code-leaf';
-import { CodeLineElement } from '@/components/plate-ui/code-line-element';
-import { CodeSyntaxLeaf } from '@/components/plate-ui/code-syntax-leaf';
 import { CommentLeaf } from '@/components/plate-ui/comment-leaf';
 import { EmojiCombobox } from '@/components/plate-ui/emoji-combobox';
 import { ExcalidrawElement } from '@/components/plate-ui/excalidraw-element';
@@ -160,19 +141,12 @@ const resetBlockTypesCommonRule = {
   defaultType: ELEMENT_PARAGRAPH,
 };
 
-const resetBlockTypesCodeBlockRule = {
-  types: [ELEMENT_CODE_BLOCK],
-  defaultType: ELEMENT_PARAGRAPH,
-  onReset: unwrapCodeBlock,
-};
-
 export const plugins = createPlugins(
   [
     // Nodes
     createParagraphPlugin(),
     createHeadingPlugin(),
     createBlockquotePlugin(),
-    createCodeBlockPlugin(),
     createHorizontalRulePlugin(),
     createLinkPlugin({
       renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
@@ -192,9 +166,6 @@ export const plugins = createPlugins(
     createItalicPlugin(),
     createUnderlinePlugin(),
     createStrikethroughPlugin(),
-    createCodePlugin(),
-    createSubscriptPlugin(),
-    createSuperscriptPlugin(),
     createFontColorPlugin(),
     createFontBackgroundColorPlugin(),
     createFontSizePlugin(),
@@ -218,7 +189,6 @@ export const plugins = createPlugins(
             ELEMENT_H2,
             ELEMENT_H3,
             ELEMENT_BLOCKQUOTE,
-            ELEMENT_CODE_BLOCK,
           ],
         },
       },
@@ -232,7 +202,6 @@ export const plugins = createPlugins(
             ELEMENT_H2,
             ELEMENT_H3,
             ELEMENT_BLOCKQUOTE,
-            ELEMENT_CODE_BLOCK,
           ],
         },
       },
@@ -301,16 +270,6 @@ export const plugins = createPlugins(
             hotkey: 'Backspace',
             predicate: isSelectionAtBlockStart,
           },
-          {
-            ...resetBlockTypesCodeBlockRule,
-            hotkey: 'Enter',
-            predicate: isCodeBlockEmpty,
-          },
-          {
-            ...resetBlockTypesCodeBlockRule,
-            hotkey: 'Backspace',
-            predicate: isSelectionAtCodeBlockStart,
-          },
         ],
       },
     }),
@@ -328,7 +287,7 @@ export const plugins = createPlugins(
           {
             hotkey: 'enter',
             query: {
-              allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
+              allow: [ELEMENT_BLOCKQUOTE, ELEMENT_TD],
             },
           },
         ],
@@ -343,7 +302,7 @@ export const plugins = createPlugins(
             match: (n) => {
               return !!(
                 n.type &&
-                ([ELEMENT_TABLE, ELEMENT_LI, ELEMENT_CODE_BLOCK].includes(
+                ([ELEMENT_TABLE, ELEMENT_LI].includes(
                   n.type as string
                 ) ||
                   n[KEY_LIST_STYLE_TYPE])
@@ -378,9 +337,6 @@ export const plugins = createPlugins(
     components: withDraggables(
       withPlaceholders({
         [ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-        [ELEMENT_CODE_BLOCK]: CodeBlockElement,
-        [ELEMENT_CODE_LINE]: CodeLineElement,
-        [ELEMENT_CODE_SYNTAX]: CodeSyntaxLeaf,
         [ELEMENT_HR]: HrElement,
         [ELEMENT_H1]: withProps(HeadingElement, { variant: 'h1' }),
         [ELEMENT_H2]: withProps(HeadingElement, { variant: 'h2' }),
@@ -404,13 +360,10 @@ export const plugins = createPlugins(
         [ELEMENT_TR]: TableRowElement,
         [ELEMENT_EXCALIDRAW]: ExcalidrawElement,
         [MARK_BOLD]: withProps(PlateLeaf, { as: 'strong' }),
-        [MARK_CODE]: CodeLeaf,
         [MARK_HIGHLIGHT]: HighlightLeaf,
         [MARK_ITALIC]: withProps(PlateLeaf, { as: 'em' }),
         [MARK_KBD]: KbdLeaf,
         [MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: 's' }),
-        [MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: 'sub' }),
-        [MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: 'sup' }),
         [MARK_UNDERLINE]: withProps(PlateLeaf, { as: 'u' }),
         [MARK_COMMENT]: CommentLeaf,
       })

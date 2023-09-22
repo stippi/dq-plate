@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   MARK_BOLD,
-  MARK_CODE,
   MARK_ITALIC,
   MARK_STRIKETHROUGH,
   MARK_UNDERLINE,
@@ -42,9 +41,6 @@ export function FloatingToolbarButtons() {
             tooltip="Strikethrough (⌘+⇧+M)"
           >
             <Icons.strikethrough />
-          </MarkToolbarButton>
-          <MarkToolbarButton nodeType={MARK_CODE} tooltip="Code (⌘+E)">
-            <Icons.code />
           </MarkToolbarButton>
 
           <LinkToolbarButton />
