@@ -2,11 +2,12 @@
 
 import React, { useRef } from 'react';
 import { CommentsProvider } from '@udecode/plate-comments';
-import { Plate } from '@udecode/plate-common';
+import { Plate, Value } from '@udecode/plate-common';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+import { sampleDocument } from '@/assets/samples/americanBeauty';
 import { commentsUsers, myUserId } from '@/lib/plate/comments';
 import { MENTIONABLES } from '@/lib/plate/mentionables';
 import { plugins } from '@/lib/plate/plate-plugins';
@@ -20,16 +21,32 @@ import { FloatingToolbar } from '@/components/plate-ui/floating-toolbar';
 import { FloatingToolbarButtons } from '@/components/plate-ui/floating-toolbar-buttons';
 import { MentionCombobox } from '@/components/plate-ui/mention-combobox';
 
+function addParagraphIDs(document: Value): Value {
+  const processedDocument: Value = [];
+  let id = 1;
+  for (const paragraph of document) {
+    id++
+    processedDocument.push({
+      type: ELEMENT_PARAGRAPH,
+      id: `${id}`,
+      children: paragraph.children
+    });
+  }
+  return processedDocument;
+}
+
+const initialValue = addParagraphIDs(sampleDocument);
+
 export default function PlateEditor() {
   const containerRef = useRef(null);
 
-  const initialValue = [
-    {
-      id: '1',
-      type: ELEMENT_PARAGRAPH,
-      children: [{ text: 'Hello, World!' }],
-    },
-  ];
+  // const initialValue = [
+  //   {
+  //     id: '1',
+  //     type: ELEMENT_PARAGRAPH,
+  //     children: [{ text: 'Hello, World!' }],
+  //   },
+  // ];
 
   return (
     <DndProvider backend={HTML5Backend}>
